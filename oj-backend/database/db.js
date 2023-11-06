@@ -1,10 +1,18 @@
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-dotenv.config();
+async function connectToDB() {
+    dotenv.config();
 
-const mongo_url = process.env.MONGO_URL;
+    mongoose.connect(process.env.MONGO_URL);
 
-const conn = mongoose.connect(mongo_url);
+    const db = mongoose.connection;
 
-module.exports = { conn };
+    db.on("error", console.error.bind(console, "connection error: "));
+
+    db.once("open", () => {
+    console.log("Connected successfully");
+    });
+}
+
+export { connectToDB }
