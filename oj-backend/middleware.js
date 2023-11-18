@@ -22,7 +22,7 @@ async function checkToken(req, res, next) {
         }
 
         // Validate the User
-        console.log("Payload", payload, "Protected Header", protectedHeader);
+        // console.log("Payload", payload, "Protected Header", protectedHeader);
 
         next();
 

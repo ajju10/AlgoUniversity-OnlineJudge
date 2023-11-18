@@ -1,30 +1,36 @@
 import express, { json } from 'express';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import multer from 'multer';
 
 import { connectToDB } from './database/db.js';
-
-import { 
-    signupHandler, 
+import {
+    signupHandler,
     loginHandler,
     getAllProblems,
-    getProblem
+    getProblem,
+    uploadFileAndTest,
 } from './controllers/controller.js';
-
 import { checkToken } from './middleware.js';
 
-const app = express()
+const app = express();
+const upload = multer({ dest: 'uploads/' });
 
 // Middleware
-app.use(json())
-app.use(cookieParser())
+app.use(json());
+app.use(cors());
+app.use(cookieParser());
 
-connectToDB();
+try {
+    connectToDB();
+} catch (e) {
+    console.log(e.message);
+}
 
-const port = 3000
+const port = 8000;
 
 app.get('/', async (req, res) => {
-    console.log(req.headers)
-    res.send('Hello World!')
+    res.send('Hello World!');
 });
 
 app.post('/signup', async (req, res) => {
@@ -36,7 +42,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.post('/admin/signup', async (req, res) => {
-    console.log("Signup Handler", req.body);
+    console.log('Signup Handler', req.body);
     await signupHandler(req, 'admin', res);
 });
 
@@ -50,6 +56,10 @@ app.get('/get/problems', checkToken, async (req, res) => {
 
 app.get('/get/problem/:code', checkToken, async (req, res) => {
     await getProblem(req, res);
+});
+
+app.post('/problem/:code/upload', upload.single('file'), async (req, res) => {
+    await uploadFileAndTest(req, res);
 });
 
 app.listen(port, () => {
