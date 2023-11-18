@@ -21,11 +21,7 @@ app.use(json());
 app.use(cors());
 app.use(cookieParser());
 
-try {
-    connectToDB();
-} catch (e) {
-    console.log(e.message);
-}
+connectToDB()
 
 const port = 8000;
 

@@ -1,35 +1,23 @@
-import { Table } from 'flowbite-react'
-import { useEffect, useState } from 'react'
-import axios from 'axios'
-import { Link } from 'react-router-dom'
+import { Table } from 'flowbite-react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 export default function ProblemList() {
-  const [problems, setProblems] = useState([])
-
-  // const tokenString = sessionStorage.getItem('token')
-  // const userToken = JSON.parse(tokenString)
+  const [problems, setProblems] = useState([]);
 
   useEffect(() => {
-    fetchProblems()
-  }, [])
-
-  const fetchProblems = async () => {
-    const res = await axios.get('http://localhost:8000/get/problems', {
-      headers: {
-        "Authorization": "Bearer" + localStorage.getItem('token'),
-      }
+    const fetchProblems = async () => {
+      const res = await axios.get('http://localhost:8000/get/problems', {
+        headers: {
+          'Authorization': 'Bearer' + localStorage.getItem('token'),
+        },
+      });
+      setProblems(res.data.result);
+    };
+    fetchProblems().then(() => {
     });
-    
-    setProblems(res.data.result);
-
-    // const filledArray = Array(10).fill({
-    //   name: 'Default Problem',
-    //   difficulty: 'Medium',
-    //   code: '002',
-    // })
-
-    // setProblems(filledArray)
-  }
+  }, []);
 
   return (
     <Table>
@@ -50,9 +38,9 @@ export default function ProblemList() {
               <Table.Cell>{problem.difficulty}</Table.Cell>
               <Table.Cell>Submitted</Table.Cell>
             </Table.Row>
-          )
+          );
         })}
       </Table.Body>
     </Table>
-  )
+  );
 }

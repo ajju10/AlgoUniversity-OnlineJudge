@@ -14,18 +14,17 @@ export default function Problem() {
   };
 
   const handleFileUpload = async () => {
-    console.log('Submit button clicked on file upload');
     try {
       const form = new FormData();
       form.append('title', 'My Code File');
       form.append('file', selectedFile);
-      console.log('Post Data Form:', form);
+      form.append('email', localStorage.getItem('email'));
 
       const res = await axios.post(`http://localhost:8000/problem/${id}/upload`, form, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': 'Bearer ' + localStorage.getItem('token'),
-        }
+        },
       });
       console.log(res.data);
     } catch (e) {
@@ -34,13 +33,13 @@ export default function Problem() {
   };
 
   return (
-    <div id="fileUpload" className="max-w-md">
-      <div className="mb-2 block">
-        <Label htmlFor="file" value="Upload file" />
+    <div id='fileUpload' className='max-w-md'>
+      <div className='mb-2 block'>
+        <Label htmlFor='file' value='Upload file' />
       </div>
       <FileInput
-        id="file"
-        helperText="Upload C++ File"
+        id='file'
+        helperText='Upload C++ File'
         onChange={onFileChange}
       />
       <Button onClick={handleFileUpload}>Submit</Button>

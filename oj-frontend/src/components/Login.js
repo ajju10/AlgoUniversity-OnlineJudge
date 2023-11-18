@@ -1,11 +1,8 @@
-import axios from 'axios'
-import { Card, Label, TextInput, Checkbox, Button } from 'flowbite-react'
+import axios from 'axios';
+import { Card, Label, TextInput, Checkbox, Button } from 'flowbite-react';
 
 async function onSignIn(e) {
-  console.log('Sign In Clicked on submit')
-  console.log('Email:', e.target.email1.value)
-  console.log('Password:', e.target.password1.value)
-  e.preventDefault()
+  e.preventDefault();
   const data = JSON.stringify({
     email: e.target.email1.value,
     password: e.target.password1.value,
@@ -15,11 +12,11 @@ async function onSignIn(e) {
       'Content-Type': 'application/json',
     },
   });
-  console.log(res.data);
-  // Save token in local storage
+
   localStorage.setItem('token', res.data.result.token);
+  localStorage.setItem('email', e.target.email1.value);
   // Redirect to problems page
-  window.location.href = '/problems';
+  window.location.href = '/';
 }
 
 export default function Login() {
@@ -50,5 +47,5 @@ export default function Login() {
         <Button type='submit'>Sign In</Button>
       </form>
     </Card>
-  )
+  );
 }
