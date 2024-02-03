@@ -8,6 +8,7 @@ const solutionSchema = new Schema({
     language: String,
     source_code: String,
     verdict: String,
+    output_log: String,
     submitted_by: String,
 }, { timestamps: true });
 

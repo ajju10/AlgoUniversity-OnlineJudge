@@ -1,3 +1,11 @@
 node_modules/
 package-lock.json
 .idea/
+.vscode/
+bun.lockb
+.env
+combined.log
+error.log
+in.txt
+out.txt
+uploads/

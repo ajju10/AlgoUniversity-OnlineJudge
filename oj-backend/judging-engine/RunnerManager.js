@@ -1,3 +1,4 @@
+import { logger } from '../index.js';
 import CppRunner from './CppRunner.js';
 
 function createRunner(ext) {
@@ -7,25 +8,21 @@ function createRunner(ext) {
             runner = new CppRunner();
             break;
         default:
-            runner = null;
-            break;
+            logger.log('info', 'No Runner defined for chosen programming language');
+            throw new Error('No Runner defined for chosen programming language');
     }
     return runner;
 }
 
-function runCode(testCases, filePath, ext, callback) {
-    let runner = createRunner(ext);
-    if (runner) {
-        runner.run(filePath, testCases, ext, (status, message) => {
-            console.log(status, message);
-            if (status === 0) {
-                callback('Accepted', message);
-            } else {
-                callback('Rejected', message);
-            }
-        });
-    } else {
-        callback('Error', `Invalid file format`);
+async function runCode(testCases, filePath, ext) {
+    logger.log('info', 'Preparing Code Runner');
+    try {
+        let runner = createRunner(ext);
+        const result = await runner.run(filePath, testCases);
+        return result;
+    } catch (error) {
+        logger.log('info', `Error in runCode: ${error.message}`);
+        throw new Error(error.message);
     }
 }
 

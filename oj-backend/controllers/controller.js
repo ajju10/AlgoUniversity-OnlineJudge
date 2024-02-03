@@ -6,10 +6,11 @@ import { User } from '../models/user.js';
 import { Problem } from '../models/problem.js';
 import { TestCase } from '../models/test_case.js';
 import { runCode } from '../judging-engine/RunnerManager.js';
-import { deleteFiles } from '../utils.js';
 import { Solution } from '../models/solution.js';
+import { logger } from '../index.js';
 
 async function signupHandler(req, role, res) {
+    logger.log('info', 'Signup Request Recieved');
     const { fullName, email, password, dob } = req.body;
 
     // Check if the user already exists in the DB
@@ -91,7 +92,7 @@ async function loginHandler(req, role, res) {
     // Save JWT Token in cookie
     res.cookie('authcookie', token, {
         maxAge: 900000,
-        httpOnly: true,
+        // httpOnly: true,
     });
 
     const result = {
@@ -110,8 +111,20 @@ async function loginHandler(req, role, res) {
 async function getAllProblems(_, res) {
     let problems = await Problem.find({});
     if (problems.length > 0) {
+        // Fetch total number of submissions for each problem
+        const result = [];
+        for (let i = 0; i < problems.length; i++) {
+            const problem = problems[i];
+            const submissions = await Solution.collection.countDocuments({
+                problem: problem._id,
+            });
+            result.push({
+                ...problem._doc,
+                totalSubmissions: submissions,
+            });
+        }
         return res.status(200).json({
-            result: problems,
+            result,
             message: 'Data fetched successfully',
         });
     } else {
@@ -126,13 +139,26 @@ async function getProblem(req, res) {
     const problem = await Problem.findOne({ code });
     if (problem) {
         return res.status(200).json({
-            result: problem,
+            ...problem._doc,
         });
     } else {
         return res.status(404).json({
             message: 'Problem not found',
         });
     }
+}
+
+async function getSubmission(req, res) {
+    let code = req.params['code'];
+    let user = req.params['user'];
+    const problem = await Problem.findOne({ code });
+    const submissions = await Solution.find({
+        problem: problem._id,
+        submitted_by: user,
+    });
+    return res.status(200).json({
+        submissions: submissions
+    })
 }
 
 async function uploadFileAndTest(req, res) {
@@ -149,33 +175,37 @@ async function uploadFileAndTest(req, res) {
     const problem = await Problem.findOne({ code: problemCode });
     const testCases = await TestCase.find({ problem: problem._id });
 
+    logger.log('info', 'Starting code runner');
     let solution = new Solution({
         problem: problem._id,
         language: ext,
         source_code: sourceCode,
         verdict: 'Initial',
+        output_log: '',
         submitted_by: req.body.email,
     });
-    await solution.save();
 
     // Test the code against the test cases
-    runCode(testCases, newPath, ext, async (status, message) => {
-        console.log(status, message);
-        const response = {
-            status,
-            message,
-        };
+    let response;
+    try {
+        const result = await runCode(testCases, newPath, ext);
+        if (result instanceof Error) {
+            solution.verdict = 'Runtime Error';
+            solution.output_log = result.message;
+            response = res.status(200).json({ verdict: result.message });
+        } else {
+            solution.verdict = 'Accepted';
+            solution.output_log = result;
+            response = res.status(200).json({ verdict: result });
+        }
+    } catch (error) {
+        response = res.status(404).json(error.message);
+    }
 
-        // Find the solution and update the verdict
-        solution.verdict = message;
+    if (solution.verdict !== 'Initial') {
         await solution.save();
-
-        // Delete the source code and the executable file
-        deleteFiles(newPath);
-
-        // Send JSON response to client
-        return res.end(JSON.stringify(response));
-    });
+    }
+    return response;
 }
 
 // Export the handlers
@@ -184,5 +214,6 @@ export {
     loginHandler,
     getAllProblems,
     getProblem,
+    getSubmission,
     uploadFileAndTest,
 };

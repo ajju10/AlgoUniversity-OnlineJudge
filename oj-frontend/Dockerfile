@@ -1,10 +1,10 @@
 FROM node:18.17.1
 LABEL authors="ajay"
-WORKDIR /usr/oj-backend
-ENV NODE_ENV production
+WORKDIR /usr/oj-frontend
 COPY package.json .
 COPY package-lock.json .
 RUN npm install
+RUN npm install serve
 COPY . .
-EXPOSE 8000
-CMD ["node", "index.js"]
+RUN npm run build
+CMD ["serve", "-s", "build"]

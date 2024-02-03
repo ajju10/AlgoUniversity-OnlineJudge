@@ -13,7 +13,7 @@ export default function NavBarLogin() {
 
   return (
     <Navbar fluid rounded className='bg-teal-400'>
-      <Navbar.Brand href='#'>
+      <Navbar.Brand href='/'>
         <img src={logo} className='mr-3 h-6 sm:h-9' alt='logo' />
         <span className='self-center whitespace-nowrap text-xl font-semibold dark:text-white'>
           Online Judge
@@ -21,10 +21,8 @@ export default function NavBarLogin() {
       </Navbar.Brand>
       <Navbar.Toggle />
       <Navbar.Collapse>
-        <div className='columns-4'>
-          <Navbar.Link href='/problems'>Problems</Navbar.Link>
-        </div>
-        <div className='columns-4'>
+        <Navbar.Link href='/problems'>Problems</Navbar.Link>
+        <div className='columns-2'>
           <Navbar.Link href='#'>{localStorage.getItem('email')}</Navbar.Link>
           <Navbar.Link href='/' onClick={handleLogout}>Logout</Navbar.Link>
         </div>

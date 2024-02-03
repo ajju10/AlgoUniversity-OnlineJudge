@@ -1,5 +1,7 @@
 import * as jose from 'jose';
 
+import { logger } from './index.js';
+
 async function checkToken(req, res, next) {
     const authHeader = req.headers['authorization'];
 
@@ -20,14 +22,10 @@ async function checkToken(req, res, next) {
         if (!payload) {
             return res.sendStatus(403);
         }
-
-        // Validate the User
-        // console.log("Payload", payload, "Protected Header", protectedHeader);
-
         next();
 
     } catch (err) {
-        console.log("Error in auth:", err.message);
+        logger.log('info', `Error in auth: ${err.message}`);
         res.sendStatus(403);
     }
 }
