@@ -17,6 +17,7 @@ export default function Problem() {
   const [problemData, setProblemData] = useState({});
   const [selectedFile, setSelectedFile] = useState(null);
   const isLoggedIn = localStorage.getItem('token');
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     fetchProblemDetails()
@@ -56,7 +57,7 @@ export default function Problem() {
         form.append('email', localStorage.getItem('email'));
 
         const res = await axios.post(
-          `http://localhost:8000/problem/${id}/upload`,
+          `${apiUrl}/problem/${id}/upload`,
           form,
           {
             headers: {
@@ -76,7 +77,7 @@ export default function Problem() {
     if (!isLoggedIn) {
       window.location.href = '/login';
     }
-    const res = await axios.get(`http://localhost:8000/get/problem/${id}`, {
+    const res = await axios.get(`${apiUrl}/get/problem/${id}`, {
       headers: {
         Authorization: isLoggedIn,
       },
@@ -86,7 +87,7 @@ export default function Problem() {
 
   const fetchSubmissionDetails = async () => {
     const email = localStorage.getItem('email');
-    const res = await axios.get(`http://localhost:8000/get/problem/${id}/${email}/submission`, {
+    const res = await axios.get(`${apiUrl}/get/problem/${id}/${email}/submission`, {
       headers: {
         Authorization: isLoggedIn,
       },

@@ -4,6 +4,8 @@ import axios from 'axios';
 import { Card, Label, TextInput, Button } from 'flowbite-react';
 
 async function onSignIn(e) {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   e.preventDefault();
   const data = JSON.stringify({
     email: e.target.email1.value,
@@ -11,7 +13,7 @@ async function onSignIn(e) {
   });
 
   try {
-    const res = await axios.post('http://localhost:8000/login', data, {
+    const res = await axios.post(`${apiUrl}/login`, data, {
       headers: {
         'Content-Type': 'application/json',
       },

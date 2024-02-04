@@ -4,12 +4,14 @@ import { Button, Card, Label, TextInput } from 'flowbite-react';
 import axios from 'axios';
 
 async function onSignUp(e) {
+  const apiUrl = process.env.REACT_APP_API_URL;
+
   e.preventDefault();
   const data = JSON.stringify({
     email: e.target.email1.value,
     password: e.target.password1.value,
   });
-  const res = await axios.post('http://localhost:8000/signup', data, {
+  const res = await axios.post(`${apiUrl}/signup`, data, {
     headers: {
       'Content-Type': 'application/json',
     },

@@ -8,9 +8,10 @@ import NavBarLogout from './NavBarLogout';
 export default function ProblemList() {
   const [problems, setProblems] = useState([]);
   const isLoggedIn = localStorage.getItem('token');
+  const apiUrl = process.env.REACT_APP_API_URL;
 
   const fetchProblems = async () => {
-    const res = await axios.get('http://localhost:8000/get/problems');
+    const res = await axios.get(`${apiUrl}/get/problems`);
     setProblems(res.data.result);
   };
 
