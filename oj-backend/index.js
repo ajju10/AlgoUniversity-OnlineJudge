@@ -29,9 +29,7 @@ const allowedOrigins = [
 
 // Middleware
 app.use(json());
-app.use(cors({
-    origin: allowedOrigins
-}));
+app.use(cors());
 app.use(cookieParser());
 
 connectToDB();
