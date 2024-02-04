@@ -21,9 +21,17 @@ const upload = multer({ dest: 'uploads/' });
 
 const port = 8000;
 
+const allowedOrigins = [
+    "https://algo-university-online-judge-dqc5kqvjx-ajju10.vercel.app",
+    "https://algo-university-online-judge.vercel.app",
+    "https://algo-university-online-judge-git-main-ajju10.vercel.app",
+];
+
 // Middleware
 app.use(json());
-app.use(cors());
+app.use(cors({
+    origin: allowedOrigins
+}));
 app.use(cookieParser());
 
 connectToDB();

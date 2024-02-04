@@ -9,6 +9,7 @@ export default function ProblemList() {
   const [problems, setProblems] = useState([]);
   const isLoggedIn = localStorage.getItem('token');
   const apiUrl = process.env.REACT_APP_API_URL;
+  console.log("API URL", apiUrl);
 
   const fetchProblems = async () => {
     const res = await axios.get(`${apiUrl}/get/problems`);
